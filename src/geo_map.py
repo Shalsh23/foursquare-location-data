@@ -22,12 +22,12 @@ from shapely.geometry import Point
 world_map = gpd.read_file('/Users/shalkishrivastava/renci/Learning/kaggle/foursquare-location-matching/ne_50m_admin_0_countries/ne_50m_admin_0_countries.shp')
 
 fig, ax = plt.subplots(figsize=(5,15))
-world_map.plot(ax = ax)
+# world_map.plot(ax = ax)
 # plt.show()
 
 poi = pd.read_csv('/Users/shalkishrivastava/renci/Learning/kaggle/foursquare-location-matching/train.csv')
 
-# poi_samples = poi.head(10000)
+poi_samples = poi.head(10000)
 # # print(poi_samples.head())
 # # print(poi_samples.columns)
 # # print(poi_samples.dtypes)
@@ -49,8 +49,16 @@ geometry = [Point(xy) for xy in zip(poi["longitude"], poi["latitude"])]
 geo_df = gpd.GeoDataFrame(poi, crs = crs, geometry = geometry)
 fig, ax = plt.subplots(figsize = (15, 15))
 world_map.to_crs(epsg=4326).plot(ax = ax, alpha = 0.3, color = "grey")
-geo_df.plot(ax = ax, alpha = 0.1, markersize = 0.5)
-ax.set_title('foursqaure location data')
-plt.savefig('foursquare location data map')
+# geo_df.plot(ax = ax, alpha = 0.1, markersize = 0.5)
+# ax.set_title('foursqaure location data')
+# plt.savefig('foursquare location data map')
 # plt.show()
 
+# ----------------------------------------------------------------------------------------------------------------------
+# try plotly library
+
+import plotly.express as px
+
+plotly_fig = px.scatter_mapbox(pd.DataFrame(poi.head(100)), lat="latitude", lon="longitude", zoom=15)
+# print(plotly_fig)
+# plotly_fig.show() # not working

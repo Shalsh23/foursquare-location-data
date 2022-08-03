@@ -4,3 +4,5 @@ geopandas==0.11.0
 Shapely==1.8.2
 geopy==2.2.0
 certifi==2022.6.15
+plotly==5.9.0
+tqdm==4.64.0
