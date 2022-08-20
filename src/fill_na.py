@@ -38,11 +38,13 @@ geolocator = Nominatim(user_agent="kaggle-foursquare", ssl_context=ctx)
 
 def reverse_geolocator(row):
     coordinates = str(row['latitude']) + "," + str(row['longitude'])
-    return geolocator.reverse(coordinates).raw
+    reverse = geolocator.reverse(coordinates) #.raw
+    print(coordinates)
+    return reverse
 
-limiter = RateLimiter(reverse_geolocator, min_delay_seconds=0.001)
+limiter = RateLimiter(reverse_geolocator, min_delay_seconds=0.1)
 poi['address'] = poi.apply(limiter, axis=1)
-
 # print(poi['address'].values)
+poi.to_csv("poi_address.csv", encoding='utf-8', index=False)
 
 
