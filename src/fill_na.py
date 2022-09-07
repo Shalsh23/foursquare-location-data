@@ -1,17 +1,19 @@
 import pandas as pd
+import numpy as np
 import certifi
 import ssl
 
 from geopy.geocoders import Nominatim
-from geopy.extra.rate_limiter import RateLimiter
+# from geopy.extra.rate_limiter import RateLimiter
+from ratelimiter import RateLimiter
 # import tqdm
 # from tqdm._tqdm_notebook import tqdm_notebook
 # from shapely.geometry import Point
 # import geopandas as gpd
 
-poi = pd.read_csv('/Users/shalkishrivastava/renci/Learning/kaggle/foursquare-location-matching/train.csv')
+# poi = pd.read_csv('/Users/shalkishrivastava/renci/Learning/kaggle/foursquare-location-matching/train.csv')
 # for development, use test.csv or test_mini.csv
-# poi = pd.read_csv('/Users/shalkishrivastava/renci/Learning/kaggle/foursquare-location-matching/test.csv')
+poi = pd.read_csv('/Users/shalkishrivastava/professional_development/foursquare-location-data/data/mini_train.csv')
 
 # setup
 ctx = ssl.create_default_context(cafile=certifi.where())
@@ -42,9 +44,18 @@ def reverse_geolocator(row):
     print(coordinates)
     return reverse
 
-limiter = RateLimiter(reverse_geolocator, min_delay_seconds=0.1)
-poi['address'] = poi.apply(limiter, axis=1)
+limiter = RateLimiter(min_delay_seconds=0.1)
+poi['address'] = np.nan
+# print(poi)
+
+# @RateLimiter(reverse_geolocator, min_delay_seconds=0.1)
+
+for row in range(poi.shape[0]):
+    with limiter:
+        poi.at[row, 'address'] = reverse_geolocator(poi.iloc[row])
+
+# poi['address'] = poi.apply(limiter, axis=1)
 # print(poi['address'].values)
-poi.to_csv("poi_address.csv", encoding='utf-8', index=False)
+# poi.to_csv("poi_address.csv", encoding='utf-8', index=False)
 
 
