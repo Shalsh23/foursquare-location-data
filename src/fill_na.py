@@ -11,9 +11,9 @@ from geopy.extra.rate_limiter import RateLimiter
 # from shapely.geometry import Point
 # import geopandas as gpd
 
-# poi = pd.read_csv('/Users/shalkishrivastava/renci/Learning/kaggle/foursquare-location-matching/train.csv')
+# poi = pd.read_csv('/Users/shalkishrivastava/shalkishrivastava_data/professional_development/foursquare-location-data/data/train.csv')
 # for development, use test.csv or test_mini.csv
-poi = pd.read_csv('/Users/shalkishrivastava/professional_development/foursquare-location-data/data/mini_train.csv')
+poi = pd.read_csv('/Users/shalkishrivastava/shalkishrivastava_data/professional_development/foursquare-location-data/data/mini_train.csv')
 
 # setup
 ctx = ssl.create_default_context(cafile=certifi.where())
@@ -46,19 +46,17 @@ geolocator = Nominatim(user_agent="kaggle-foursquare", ssl_context=ctx)
 
 limit_geocode = RateLimiter(geolocator.reverse, min_delay_seconds = 1, return_value_on_exception = None)
 print("****")
-print(type(limit_geocode))
 
 
 # limiter = RateLimiter(min_delay_seconds=0.1)
-poi['address'] = np.nan
-# print(poi)
+poi['reverse_lookup_address'] = np.nan
 
 # @RateLimiter(reverse_geolocator, min_delay_seconds=0.1)
 
 for row in range(poi.shape[0]):
     # with limiter:
     # poi.at[row, 'address'] = reverse_geolocator(poi.iloc[row])
-    coordinates = (poi.iloc[row]['latitude'], poi.iloc[row]['longitude'])
+    # coordinates = (poi.iloc[row]['latitude'], poi.iloc[row]['longitude'])
     coordinates = str(poi.iloc[row]['latitude']) + "," + str(poi.iloc[row]['longitude'])
     # print(poi.iloc[row]['address'])
     address = limit_geocode(coordinates).address
@@ -66,10 +64,8 @@ for row in range(poi.shape[0]):
     street_address = address_split[0]
     city_address = address_split[1]
     print(street_address, city_address)
-    # poi.iloc[row]['address'] = limit_geocode(coordinates).address
-    # print(type(limit_geocode(coordinates).address))
-    # print(poi.iloc[row]['address'])
-    break
+    poi.at[row, 'reverse_lookup_address'] = limit_geocode(coordinates).address
+    # break
 
 # poi['address'] = poi.apply(limiter, axis=1)
 # print(poi['address'].values)
